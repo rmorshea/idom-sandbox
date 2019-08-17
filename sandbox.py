@@ -1,5 +1,7 @@
 import os
 import ast
+import traceback
+
 from sanic.response import redirect
 
 import idom
@@ -18,8 +20,11 @@ async def Slideshow(self, index=0):
     async def update_image(event):
         self.update(index + 1)
 
-    url = f"https://picsum.photos/800/300?image={index}"
-    return idom.node("img", src=url, onClick=update_image)
+    return idom.html.img(
+        src=f"https://picsum.photos/500/300?image={index}",
+        onClick=update_image,
+        width="100%",
+    )
 
 Slideshow()
 """[1:]
@@ -28,18 +33,36 @@ Slideshow()
 def exec_then_eval(code):
     block = ast.parse(code, mode="exec")
 
-    # assumes last node is an expression
-    last = ast.Expression(block.body.pop().value)
+    if not block.body or not hasattr(block.body[-1], "value"):
+        return idom.html.div()
+
+    last_expr = ast.Expression(block.body.pop().value)
 
     context = {}
     exec(compile(block, "<string>", mode="exec"), context)
-    return eval(compile(last, "<string>", mode="eval"), context)
+    return eval(compile(last_expr, "<string>", mode="eval"), context)
+
+
+def info():
+    return idom.html.div(
+        idom.html.link(
+            href="https://fonts.googleapis.com/icon?family=Material+Icons",
+            rel="stylesheet",
+        ),
+        idom.html.a(
+            idom.node("i", "info", cls="material-icons", style={"color": "rgba(233, 237, 237, 1)"}),
+            href="https://github.com/rmorshea/idom-sandbox",
+            target="_blank",
+            id="info",
+        )
+    )
 
 
 @idom.element
 async def Sandbox(self, text):
     output = Output(text)
     return idom.html.div(
+        info(),
         Editor(text, output),
         output,
         idom.html.style("""
@@ -60,13 +83,15 @@ async def Sandbox(self, text):
             #editor {
                 box-sizing: border-box;
                 float: left;
-                min-width: 650px;
-                height: 100%;
+                min-width: 300px;
                 margin-right: 10px;
             }
             #output {
-                height: 100%;
+                min-width: 300px;
                 float: left;
+            }
+            #info {
+                float: right;
             }
         """)
     )
@@ -107,7 +132,13 @@ async def Output(self, text):
     try:
         return idom.html.div(exec_then_eval(text), id="output")
     except Exception as error:
-        return idom.html.p(str(error))
+        return idom.html.pre(
+            idom.html.code(
+                traceback.format_exc(),
+                style={"color": "rgba(233, 237, 237, 1)"},
+            ),
+            id="output",
+        )
 
 
 class SandboxServer(PerClientState):
@@ -119,4 +150,4 @@ class SandboxServer(PerClientState):
             return redirect("/client/index.html")
 
 
-SandboxServer(Sandbox, example).run("0.0.0.0", int(os.environ.get("PORT", 8765)))
+SandboxServer(Sandbox, example).run("0.0.0.0", int(os.environ.get("PORT", 5000)))
