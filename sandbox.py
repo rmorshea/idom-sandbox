@@ -1,6 +1,8 @@
 import os
 import ast
+import sys
 import traceback
+from io import StringIO
 
 from sanic.response import redirect
 
@@ -8,28 +10,14 @@ import idom
 from idom.server.sanic import PerClientState
 
 
-with open("editor.js", "r") as f:
-    src = idom.Module(f.read())
+with open("static/editor.js", "r") as f:
+    editor = idom.Module(f.read())
 
-example = """
-import idom
+with open("static/example.py", "r") as f:
+    simple_example = f.read()
 
-@idom.element
-async def Slideshow(self, index=0):
-
-    async def update_image(event):
-        self.update(index + 1)
-
-    return idom.html.img(
-        src=f"https://picsum.photos/500/300?image={index}",
-        onClick=update_image,
-        width="100%",
-    )
-
-Slideshow()
-"""[
-    1:
-]
+with open("static/style.css", "r") as f:
+    global_style = idom.html.style(f.read())
 
 
 def exec_then_eval(code):
@@ -45,6 +33,13 @@ def exec_then_eval(code):
     return eval(compile(last_expr, "<string>", mode="eval"), context)
 
 
+@idom.element
+async def Sandbox(self, text):
+    output = Output(text)
+    sandbox = idom.html.div(Editor(text, output), output, id="sandbox")
+    return idom.html.div(info(), sandbox, global_style)
+
+
 def info():
     return idom.html.div(
         idom.html.link(
@@ -52,58 +47,10 @@ def info():
             rel="stylesheet",
         ),
         idom.html.a(
-            idom.node(
-                "i",
-                "info",
-                cls="material-icons",
-                style={"color": "rgba(233, 237, 237, 1)"},
-            ),
+            Icon("info"),
             href="https://github.com/rmorshea/idom-sandbox",
             target="_blank",
             id="info",
-        ),
-    )
-
-
-@idom.element
-async def Sandbox(self, text):
-    output = Output(text)
-    return idom.html.div(
-        info(),
-        Editor(text, output),
-        output,
-        idom.html.style(
-            """
-            html, body, #root, #root > div {
-                height: 100%;
-            }
-            #root {
-                padding: 10px;
-            }
-            body {
-                background-color: #263238;
-            }
-            .CodeMirror {
-                height: auto;
-                border-left: 1px solid rgb(83,127,126);
-                border-right: 1px solid rgb(83,127,126);
-                padding-right: 5px;
-            }
-            #editor {
-                box-sizing: border-box;
-                float: left;
-                min-width: 300px;
-                margin-right: 10px;
-                margin-bottom: 10px;
-            }
-            #output {
-                min-width: 300px;
-                float: left;
-            }
-            #info {
-                float: right;
-            }
-        """
         ),
     )
 
@@ -124,7 +71,7 @@ async def Editor(self, text, output):
             type="text/css",
             href="https://codemirror.net/theme/material.css",
         ),
-        src.Editor(
+        editor.Editor(
             value=text,
             options={
                 "theme": "material",
@@ -140,15 +87,58 @@ async def Editor(self, text, output):
 
 @idom.element
 async def Output(self, text):
+    return idom.html.div(ModelView(text), Printer(), id="output")
+
+
+@idom.element
+async def ModelView(self, text):
     try:
-        return idom.html.div(exec_then_eval(text), id="output")
+        return idom.html.div(exec_then_eval(text))
     except Exception as error:
         return idom.html.pre(
             idom.html.code(
                 traceback.format_exc(), style={"color": "rgba(233, 237, 237, 1)"}
-            ),
-            id="output",
+            )
         )
+
+
+def Printer():
+    view = StdoutView()
+
+    def on_print(stream):
+        view.update(stream.getvalue())
+
+    stream = sys.stdout = CaptureIO(on_print)
+
+    async def clear(event):
+        stream.truncate(0)
+        stream.seek(0)
+        view.update(stream.getvalue())
+
+    return idom.html.div(
+        Icon("clear", onClick=clear, style={"cursor": "pointer", "float": "left"}),
+        view,
+        style={"width": "100%"},
+        id="stdout",
+    )
+
+
+@idom.element
+async def StdoutView(self, text=""):
+    return idom.html.pre(
+        idom.html.code(text), style={"color": "rgba(233, 237, 237, 1)", "float": "left"}
+    )
+
+
+class CaptureIO(StringIO):
+    def __init__(self, callback):
+        super().__init__()
+        self._callback = callback
+
+    def write(self, *args, **kwargs):
+        result = super().write(*args, **kwargs)
+        self._callback(self)
+        return result
 
 
 class SandboxServer(PerClientState):
@@ -160,4 +150,9 @@ class SandboxServer(PerClientState):
             return redirect("/client/index.html")
 
 
-SandboxServer(Sandbox, example).run("0.0.0.0", int(os.environ.get("PORT", 5000)))
+def Icon(name, **attributes):
+    style = dict({"color": "rgba(233, 237, 237, 1)"}, **attributes.pop("style", {}))
+    return (idom.node("i", name, cls="material-icons", style=style, **attributes),)
+
+
+SandboxServer(Sandbox, simple_example).run("0.0.0.0", int(os.environ.get("PORT", 5000)))
