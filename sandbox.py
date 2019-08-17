@@ -1,6 +1,10 @@
+import os
 import ast
+from sanic.response import redirect
+
 import idom
 from idom.server.sanic import PerClientState
+
 
 with open("editor.js", "r") as f:
     src = idom.Module(f.read())
@@ -106,4 +110,13 @@ async def Output(self, text):
         return idom.html.p(str(error))
 
 
-PerClientState(Sandbox, example).run("localhost", 8765)
+class SandboxServer(PerClientState):
+
+    def _setup_application(self, app, config):
+        super()._setup_application(app, config)
+        @app.route("/")
+        async def to_client(request):
+            return redirect("/client/index.html")
+
+
+SandboxServer(Sandbox, example).run("0.0.0.0", int(os.environ.get("PORT", 8765)))
