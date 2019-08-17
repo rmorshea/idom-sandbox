@@ -27,7 +27,9 @@ async def Slideshow(self, index=0):
     )
 
 Slideshow()
-"""[1:]
+"""[
+    1:
+]
 
 
 def exec_then_eval(code):
@@ -50,11 +52,16 @@ def info():
             rel="stylesheet",
         ),
         idom.html.a(
-            idom.node("i", "info", cls="material-icons", style={"color": "rgba(233, 237, 237, 1)"}),
+            idom.node(
+                "i",
+                "info",
+                cls="material-icons",
+                style={"color": "rgba(233, 237, 237, 1)"},
+            ),
             href="https://github.com/rmorshea/idom-sandbox",
             target="_blank",
             id="info",
-        )
+        ),
     )
 
 
@@ -65,7 +72,8 @@ async def Sandbox(self, text):
         info(),
         Editor(text, output),
         output,
-        idom.html.style("""
+        idom.html.style(
+            """
             html, body, #root, #root > div {
                 height: 100%;
             }
@@ -79,12 +87,14 @@ async def Sandbox(self, text):
                 height: auto;
                 border-left: 1px solid rgb(83,127,126);
                 border-right: 1px solid rgb(83,127,126);
+                padding-right: 5px;
             }
             #editor {
                 box-sizing: border-box;
                 float: left;
                 min-width: 300px;
                 margin-right: 10px;
+                margin-bottom: 10px;
             }
             #output {
                 min-width: 300px;
@@ -93,7 +103,8 @@ async def Sandbox(self, text):
             #info {
                 float: right;
             }
-        """)
+        """
+        ),
     )
 
 
@@ -134,17 +145,16 @@ async def Output(self, text):
     except Exception as error:
         return idom.html.pre(
             idom.html.code(
-                traceback.format_exc(),
-                style={"color": "rgba(233, 237, 237, 1)"},
+                traceback.format_exc(), style={"color": "rgba(233, 237, 237, 1)"}
             ),
             id="output",
         )
 
 
 class SandboxServer(PerClientState):
-
     def _setup_application(self, app, config):
         super()._setup_application(app, config)
+
         @app.route("/")
         async def to_client(request):
             return redirect("/client/index.html")
