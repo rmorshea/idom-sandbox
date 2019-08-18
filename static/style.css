@@ -1,43 +1,82 @@
 html, body, #root, #root > div {
-    height: 100%;
+  height: 100%;
 }
+
 #root {
-    padding: 10px;
-    overflow: auto;
+  padding: 10px;
+  overflow: auto;
 }
+
 #sandbox {
-    display: flex;
-    height: 100%;
+  display: flex;
+  height: 100%;
 }
+
 body {
-    background-color: #263238;
+  background-color: #263238;
 }
+
 .CodeMirror {
-    height: 100%;
-    border-left: 1px solid rgb(83,127,126);
-    border-right: 1px solid rgb(83,127,126);
-    padding-right: 5px;
+  height: 100%;
+  border-left: 1px solid rgb(83,127,126);
+  border-right: 1px solid rgb(83,127,126);
+  padding-right: 5px;
 }
+
 .react-codemirror2 {
-    height: 100%;
+  height: 100%;
 }
+
 #editor {
-    box-sizing: border-box;
-    float: left;
-    height: 100%;
-    min-width: 500px;
-    width: 30%;
-    margin-right: 10px;
-    margin-bottom: 10px;
+  box-sizing: border-box;
+  float: left;
+  height: 100%;
+  min-width: 500px;
+  width: 33%;
+  margin-right: 10px;
+  margin-bottom: 10px;
 }
+
 #output {
-    flex: 1;
+  flex: 1;
+  max-width: 67%;
 }
-#info {
-    float: right;
-}
+
 #stdout {
-    padding-top: 10px;
-    margin-top: 10px;
-    border-top: 1px solid rgb(83,127,126);
+  max-width: 100%;
+  padding-top: 10px;
+  margin-top: 10px;
+  border-top: 1px solid rgb(83,127,126);
+}
+
+#output-top {
+  width: 100%;
+  display: inline-block;
+}
+
+#model-view {
+  display: inline-block;
+  width: calc(100% - 34px);
+}
+
+#info {
+  float: right;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  padding-left: 6px;
+}
+
+#clear-stdout {
+  float: right;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  padding-left: 10px;
+}
+
+#stdout > pre {
+  float: left;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  overflow: auto;
+  max-width: calc(100% - 34px);
 }

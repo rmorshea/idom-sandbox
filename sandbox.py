@@ -47,7 +47,6 @@ def info():
             rel="stylesheet",
         ),
         idom.html.a(
-            Icon("info"),
             href="https://github.com/rmorshea/idom-sandbox",
             target="_blank",
             id="info",
@@ -93,13 +92,18 @@ async def Output(self, text):
 @idom.element
 async def ModelView(self, text):
     try:
-        return idom.html.div(exec_then_eval(text))
+        view = idom.html.div(exec_then_eval(text))
     except Exception as error:
-        return idom.html.pre(
+        view = idom.html.pre(
             idom.html.code(
                 traceback.format_exc(), style={"color": "rgba(233, 237, 237, 1)"}
             )
         )
+    return idom.html.div(
+        idom.html.div(view, id="model-view"),
+        Icon("info", id="info"),
+        id="output-top",
+    )
 
 
 def Printer():
@@ -116,8 +120,8 @@ def Printer():
         view.update(stream.getvalue())
 
     return idom.html.div(
-        Icon("clear", onClick=clear, style={"cursor": "pointer", "float": "left"}),
         view,
+        Icon("cancel", onClick=clear, style={"cursor": "pointer"}, id="clear-stdout"),
         style={"width": "100%"},
         id="stdout",
     )
