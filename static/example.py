@@ -12,4 +12,6 @@ async def Slideshow(self, index=0):
         onClick=update_image,
     )
 
+print("Try clicking the image! 🖱️")
+
 Slideshow()
