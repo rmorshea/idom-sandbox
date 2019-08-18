@@ -46,20 +46,20 @@ body {
 }
 
 #output {
-  flex: 1;
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
 }
 
 #output-top {
   width: 100%;
-  flex: 0.3;
+  flex-basis: 0.3;
   display: flex;
 }
 
 #output-top > #model-view {
   display: inline-block;
-  flex: 1;
+  flex-grow: 1;
 }
 
 #output-top > #info {
@@ -69,7 +69,7 @@ body {
 }
 
 #output-bottom {
-  flex: 1;
+  flex-basis: 1;
   display: flex;
   flex-direction: row;
   max-height: 75%;
@@ -80,12 +80,18 @@ body {
 }
 
 #output-bottom > pre {
-  flex: 1;
+  flex-grow: 1;
   padding-top: 10px;
   padding-bottom: 10px;
 }
 
 #output-bottom > #clear-stdout {
+  padding-top: 6px;
+  padding-bottom: 6px;
+  padding-left: 6px;
+}
+
+#output-top > #info {
   padding-top: 6px;
   padding-bottom: 6px;
   padding-left: 6px;
