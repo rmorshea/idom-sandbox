@@ -2,14 +2,23 @@ html, body, #root, #root > div {
   height: 100%;
 }
 
+* {
+  line-height: 1.5em;
+}
+
 #root {
   padding: 10px;
+}
+
+#root > div {
+  height: 100%;
   overflow: auto;
 }
 
 #sandbox {
   display: flex;
-  height: 100%;
+  flex-direction: row;
+  height: auto;
 }
 
 body {
@@ -30,53 +39,54 @@ body {
 #editor {
   box-sizing: border-box;
   float: left;
-  height: 100%;
-  min-width: 500px;
-  width: 33%;
+  height: auto;
+  flex: 0.3;
   margin-right: 10px;
   margin-bottom: 10px;
 }
 
 #output {
   flex: 1;
-  max-width: 67%;
+  display: flex;
+  flex-direction: column;
 }
 
-#stdout {
+#output-top {
+  width: 100%;
+  flex: 0.3;
+  display: flex;
+}
+
+#output-top > #model-view {
+  display: inline-block;
+  flex: 1;
+}
+
+#output-top > #info {
+  padding-top: 6px;
+  padding-bottom: 6px;
+  padding-left: 6px;
+}
+
+#output-bottom {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  max-height: 75%;
   max-width: 100%;
   padding-top: 10px;
   margin-top: 10px;
   border-top: 1px solid rgb(83,127,126);
 }
 
-#output-top {
-  width: 100%;
-  display: inline-block;
+#output-bottom > pre {
+  flex: 1;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
-#model-view {
-  display: inline-block;
-  width: calc(100% - 34px);
-}
-
-#info {
-  float: right;
+#output-bottom > #clear-stdout {
   padding-top: 6px;
   padding-bottom: 6px;
   padding-left: 6px;
-}
-
-#clear-stdout {
-  float: right;
-  padding-top: 6px;
-  padding-bottom: 6px;
-  padding-left: 10px;
-}
-
-#stdout > pre {
-  float: left;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  overflow: auto;
-  max-width: calc(100% - 34px);
 }

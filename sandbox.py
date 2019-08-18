@@ -17,7 +17,13 @@ with open("static/example.py", "r") as f:
     simple_example = f.read()
 
 with open("static/style.css", "r") as f:
-    global_style = idom.html.style(f.read())
+    global_style = idom.html.div(
+        idom.html.style(f.read()),
+        idom.html.link(
+            href="https://fonts.googleapis.com/icon?family=Material+Icons",
+            rel="stylesheet",
+        ),
+    )
 
 
 def exec_then_eval(code):
@@ -37,21 +43,7 @@ def exec_then_eval(code):
 async def Sandbox(self, text):
     output = Output(text)
     sandbox = idom.html.div(Editor(text, output), output, id="sandbox")
-    return idom.html.div(info(), sandbox, global_style)
-
-
-def info():
-    return idom.html.div(
-        idom.html.link(
-            href="https://fonts.googleapis.com/icon?family=Material+Icons",
-            rel="stylesheet",
-        ),
-        idom.html.a(
-            href="https://github.com/rmorshea/idom-sandbox",
-            target="_blank",
-            id="info",
-        ),
-    )
+    return idom.html.div(sandbox, global_style)
 
 
 @idom.element
@@ -101,7 +93,11 @@ async def ModelView(self, text):
         )
     return idom.html.div(
         idom.html.div(view, id="model-view"),
-        Icon("info", id="info"),
+        idom.html.a(
+            Icon("info", id="info"),
+            href="https://github.com/rmorshea/idom-sandbox",
+            target="_blank",
+        ),
         id="output-top",
     )
 
@@ -123,7 +119,7 @@ def Printer():
         view,
         Icon("cancel", onClick=clear, style={"cursor": "pointer"}, id="clear-stdout"),
         style={"width": "100%"},
-        id="stdout",
+        id="output-bottom",
     )
 
 
