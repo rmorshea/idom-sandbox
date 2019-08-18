@@ -34,7 +34,7 @@ with open("static/style.css", "r") as f:
     )
 
 
-def exec_then_eval(code):
+def exec_then_eval(code, stdout):
     block = ast.parse(code, mode="exec")
 
     if not block.body or not hasattr(block.body[-1], "value"):
@@ -42,7 +42,10 @@ def exec_then_eval(code):
 
     last_expr = ast.Expression(block.body.pop().value)
 
-    context = {}
+    def _print(*args, **kwargs):
+        print(*args, **kwargs, file=stdout)
+
+    context = {"print": _print}
     exec(compile(block, "<string>", mode="exec"), context)
     return eval(compile(last_expr, "<string>", mode="eval"), context)
 
@@ -75,13 +78,32 @@ async def Editor(self, text, output):
 
 @idom.element
 async def Output(self, text):
-    return idom.html.div(ModelView(text), Printer(), id="output")
+    stdout_view = StdoutView()
+
+    def on_print(stream):
+        stdout_view.update(stream.getvalue())
+
+    stream = CaptureIO(on_print)
+
+    async def clear(event):
+        stream.truncate(0)
+        stream.seek(0)
+        view.update(stream.getvalue())
+
+    printer = idom.html.div(
+        stdout_view,
+        Icon("cancel", onClick=clear, style={"cursor": "pointer"}, id="clear-stdout"),
+        style={"width": "100%"},
+        id="output-bottom",
+    )
+
+    return idom.html.div(ModelView(text, stream), printer, id="output")
 
 
 @idom.element
-async def ModelView(self, text):
+async def ModelView(self, text, stdout):
     try:
-        view = idom.html.div(exec_then_eval(text))
+        view = idom.html.div(exec_then_eval(text, stdout))
     except Exception as error:
         view = idom.html.pre(
             idom.html.code(
@@ -96,27 +118,6 @@ async def ModelView(self, text):
             target="_blank",
         ),
         id="output-top",
-    )
-
-
-def Printer():
-    view = StdoutView()
-
-    def on_print(stream):
-        view.update(stream.getvalue())
-
-    stream = sys.stdout = CaptureIO(on_print)
-
-    async def clear(event):
-        stream.truncate(0)
-        stream.seek(0)
-        view.update(stream.getvalue())
-
-    return idom.html.div(
-        view,
-        Icon("cancel", onClick=clear, style={"cursor": "pointer"}, id="clear-stdout"),
-        style={"width": "100%"},
-        id="output-bottom",
     )
 
 
