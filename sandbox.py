@@ -66,7 +66,6 @@ async def Editor(self, text, output):
                 "theme": "material",
                 "mode": "python",
                 "indentUnit": 4,
-                "lineNumbers": True,
             },
             onChange=change,
         ),

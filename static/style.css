@@ -29,7 +29,9 @@ body {
   height: 100%;
   border-left: 1px solid rgb(83,127,126);
   border-right: 1px solid rgb(83,127,126);
-  padding-right: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+  overflow: none;
 }
 
 .react-codemirror2 {
