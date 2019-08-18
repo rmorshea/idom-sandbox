@@ -88,7 +88,7 @@ async def Output(self, text):
     async def clear(event):
         stream.truncate(0)
         stream.seek(0)
-        view.update(stream.getvalue())
+        stdout_view.update(stream.getvalue())
 
     printer = idom.html.div(
         stdout_view,
