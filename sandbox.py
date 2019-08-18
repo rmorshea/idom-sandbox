@@ -18,11 +18,19 @@ with open("static/example.py", "r") as f:
 
 with open("static/style.css", "r") as f:
     global_style = idom.html.div(
-        idom.html.style(f.read()),
         idom.html.link(
-            href="https://fonts.googleapis.com/icon?family=Material+Icons",
             rel="stylesheet",
+            href="https://codemirror.net/lib/codemirror.css",
         ),
+        idom.html.link(
+            rel="stylesheet",
+            href="https://codemirror.net/theme/material.css",
+        ),
+        idom.html.link(
+            rel="stylesheet",
+            href="https://fonts.googleapis.com/icon?family=Material+Icons",
+        ),
+        idom.html.style(f.read()),
     )
 
 
@@ -43,7 +51,7 @@ def exec_then_eval(code):
 async def Sandbox(self, text):
     output = Output(text)
     sandbox = idom.html.div(Editor(text, output), output, id="sandbox")
-    return idom.html.div(sandbox, global_style)
+    return idom.html.div(global_style, sandbox)
 
 
 @idom.element
@@ -52,16 +60,6 @@ async def Editor(self, text, output):
         output.update(new)
 
     return idom.html.div(
-        idom.html.link(
-            rel="stylesheet",
-            type="text/css",
-            href="https://codemirror.net/lib/codemirror.css",
-        ),
-        idom.html.link(
-            rel="stylesheet",
-            type="text/css",
-            href="https://codemirror.net/theme/material.css",
-        ),
         editor.Editor(
             value=text,
             options={
