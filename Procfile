@@ -1,1 +1,1 @@
-web: python sandbox.py
+web: python main.py
