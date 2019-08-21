@@ -1,3 +1,2 @@
 idom==0.5.1-a.2
 matplotlib
-greenlet

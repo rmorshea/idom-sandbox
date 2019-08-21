@@ -47,7 +47,7 @@ class SandboxServer(PerClientState):
                 asyncio.gather(forward_send(), forward_recv()), SESSION_TIME_LIMIT
             )
         finally:
-            proc.kill()
+            proc.terminate()
 
 
 def aiopipe(ctx):
@@ -64,7 +64,7 @@ class AsyncPipe:
 
     async def recv(self):
         while not self._conn.poll():
-            await asyncio.sleep(0.05)
+            await asyncio.sleep(0.01)
         return self._conn.recv()
 
 
