@@ -167,7 +167,7 @@ def validate_ast(tree):
         "enum",
         "types",
         "random",
-        "statistics"
+        "statistics",
         "typing",
     }
     builtin_blacklist = {
