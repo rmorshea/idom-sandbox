@@ -38,7 +38,21 @@ with open(os.path.join(STATIC, "style.css"), "r") as f:
 async def SandboxView(self, timeout=False):
     output = Output(simple_example)
     sandbox = idom.html.div(Editor(simple_example, output), output, id="sandbox")
-    return idom.html.div(TimeoutCountdown(), global_style, sandbox)
+    return idom.html.div(TimeoutCountdown(), Menu(), global_style, sandbox)
+
+
+@idom.element
+async def Menu(self):
+    return idom.html.div(
+        idom.html.div(
+            idom.html.div(
+                idom.html.a("About", href="https://github.com/rmorshea/idom-sandbox", target="_blank"),
+                cls="dropdown-button",
+            ),
+            cls="dropdown"
+        ),
+        cls="navbar",
+    )
 
 
 @idom.element
@@ -103,8 +117,8 @@ async def Output(self, text):
         stdout_view.update(stream.getvalue())
 
     printer = idom.html.div(
-        stdout_view,
         Icon("cancel", onClick=clear, style={"cursor": "pointer"}, id="clear-stdout"),
+        stdout_view,
         style={"width": "100%"},
         id="output-bottom",
     )
@@ -123,12 +137,7 @@ async def ModelView(self, text, stdout):
             )
         )
     return idom.html.div(
-        idom.html.div(view, id="model-view"),
-        idom.html.a(
-            Icon("info", id="info"),
-            href="https://github.com/rmorshea/idom-sandbox",
-            target="_blank",
-        ),
+        view,
         id="output-top",
     )
 
