@@ -15,7 +15,8 @@ async def Slideshow(self, index=0):
             print(" ", k, ":", v)
 
     return idom.html.img(
-        src=f"https://picsum.photos/500/300?image={index}", onClick=update_image
+        src=f"https://picsum.photos/500/300?image={index}",
+        onClick=update_image,
     )
 
 
