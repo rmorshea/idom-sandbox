@@ -27,8 +27,16 @@ async def TaskList(self, items):
             self.update(items)
 
         task_text = idom.html.td(idom.html.p(text))
-        delete_button = idom.html.td(idom.html.button("x"), onClick=remove)
-        tasks.append(idom.html.tr(task_text, delete_button, style={"color": "white"}))
+        delete_button = idom.html.td(
+            idom.html.button("x"), onClick=remove
+        )
+        tasks.append(
+            idom.html.tr(
+                task_text,
+                delete_button,
+                style={"color": "white"},
+            )
+        )
 
     return idom.node("table", tasks)
 

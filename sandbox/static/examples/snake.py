@@ -43,10 +43,16 @@ async def GameView(self, grid_size, block_size):
         ]
     )
 
-    grid_points = set((x, y) for x in range(grid_size) for y in range(grid_size))
+    grid_points = set(
+        (x, y)
+        for x in range(grid_size)
+        for y in range(grid_size)
+    )
 
     def set_new_food():
-        points_not_in_snake = grid_points.difference(game.snake)
+        points_not_in_snake = grid_points.difference(
+            game.snake
+        )
         new_food = random.choice(list(points_not_in_snake))
         get_grid_block(game.grid, new_food).update("blue")
         game.food.set(new_food)
@@ -66,32 +72,52 @@ async def GameView(self, grid_size, block_size):
 async def draw(game, grid_size, set_new_food):
     if game.snake[-1] in game.snake[:-1]:
         # point out where you touched
-        get_grid_block(game.grid, game.snake[-1]).update("red")
+        get_grid_block(game.grid, game.snake[-1]).update(
+            "red"
+        )
         game.lost.set(True)
         return
 
     vector_sum = tuple(
-        map(sum, zip(game.old_direction.get().value, game.new_direction.get().value))
+        map(
+            sum,
+            zip(
+                game.old_direction.get().value,
+                game.new_direction.get().value,
+            ),
+        )
     )
     if vector_sum != (0, 0):
         game.old_direction.set(game.new_direction.get())
 
     new_head = (
         # grid wraps due to mod op here
-        (game.snake[-1][0] + game.old_direction.get().value[0]) % grid_size,
-        (game.snake[-1][1] + game.old_direction.get().value[1]) % grid_size,
+        (
+            game.snake[-1][0]
+            + game.old_direction.get().value[0]
+        )
+        % grid_size,
+        (
+            game.snake[-1][1]
+            + game.old_direction.get().value[1]
+        )
+        % grid_size,
     )
 
     game.snake.append(new_head)
 
     if new_head == game.food.get():
         if len(game.snake) == grid_size * grid_size:
-            get_grid_block(game.grid, new_head).update("yellow")
+            get_grid_block(game.grid, new_head).update(
+                "yellow"
+            )
             game.won.set(True)
             return
         set_new_food()
     else:
-        get_grid_block(game.grid, game.snake.pop(0)).update("white")
+        get_grid_block(game.grid, game.snake.pop(0)).update(
+            "white"
+        )
 
     # update head after tail - new head may be the same as the old tail
     get_grid_block(game.grid, new_head).update("black")
@@ -101,7 +127,10 @@ def Grid(grid_size, block_size):
     return idom.html.div(
         [
             idom.html.div(
-                [Block("white", block_size) for i in range(grid_size)],
+                [
+                    Block("white", block_size)
+                    for i in range(grid_size)
+                ],
                 style={"height": block_size},
             )
             for i in range(grid_size)
@@ -133,7 +162,7 @@ def get_grid_block(grid, point):
     return grid["children"][x]["children"][y]
 
 
-print("Click to start playing and use the arrow keys to move 🎮")
+print("Click to play, and use the arrow keys to move 🎮")
 print()
 print("Slow internet may cause inconsistent frame pacing 😅")
 
