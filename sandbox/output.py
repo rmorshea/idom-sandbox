@@ -3,10 +3,20 @@ import traceback
 from io import StringIO
 
 import idom
+from idom.core import Element
+
+from .utils import custom_element
 
 
-@idom.element
-async def Output(self, text):
+class OutputElement(Element):
+
+    async def mount(self, layout):
+        layout.set_output_view(self)
+        await super().mount(layout)
+
+
+@custom_element(OutputElement)
+async def Output(self, text, last_error=None):
     stdout_view = StdoutView()
 
     def on_print(stream):
@@ -26,19 +36,26 @@ async def Output(self, text):
         id="output-bottom",
     )
 
-    return idom.html.div(ModelView(text, stream), printer, id="output")
+    return idom.html.div(ModelView(text, stream, last_error), printer, id="output")
 
 
 @idom.element
-async def ModelView(self, text, stdout):
-    try:
-        view = idom.html.div(eval_exec(text, stdout))
-    except Exception as error:
+async def ModelView(self, text, stdout, last_error=None):
+    if last_error:
         view = idom.html.pre(
             idom.html.code(
-                traceback.format_exc(), style={"color": "rgba(233, 237, 237, 1)"}
+                last_error, style={"color": "rgba(233, 237, 237, 1)"}
             )
         )
+    else:
+        try:
+            view = idom.html.div(eval_exec(text, stdout))
+        except Exception as error:
+            view = idom.html.pre(
+                idom.html.code(
+                    traceback.format_exc(), style={"color": "rgba(233, 237, 237, 1)"}
+                )
+            )
     return idom.html.div(view, id="output-top")
 
 

@@ -1,5 +1,6 @@
 import json
 import asyncio
+import traceback
 import multiprocessing as multi
 
 from sanic.response import redirect
@@ -68,9 +69,30 @@ class AsyncPipe:
         return self._conn.recv()
 
 
+class CustomLayout(Layout):
+
+    __slots__ = ("_model_view_element", "_output_element")
+
+    def set_output_view(self, element):
+        self._output_element = element
+
+    async def trigger(self, target, data):
+        try:
+            return await super().trigger(target, data)
+        except Exception as error:
+            self._output_element.update(None, last_error=traceback.format_exc())
+
+    async def render(self):
+        try:
+            return await super().render()
+        except Exception as error:
+            self._output_element.update(None, last_error=traceback.format_exc())
+            return await super().render()
+
+
 def render_element_in_loop(constructor, args, kwargs, pipe):
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    layout = Layout(constructor(*args, **kwargs))
+    layout = CustomLayout(constructor(*args, **kwargs))
     renderer = SingleStateRenderer(layout)
     loop.run_until_complete(renderer.run(pipe.send, pipe.recv, None))
