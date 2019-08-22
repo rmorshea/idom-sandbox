@@ -1,0 +1,65 @@
+/* Navbar container */
+nav {
+  margin-bottom: 10px;
+  height: 53px;
+  border-bottom: 1px solid rgb(83,127,126);
+  border-top: 1px solid rgb(83,127,126);
+  font-family: monospace;
+}
+
+nav a {
+  text-decoration: none;
+}
+
+nav ul {
+  list-style: none;
+  margin: 0;
+  padding-left: 0;
+}
+
+nav li {
+  color: rgba(233, 237, 237, 1);
+  display: block;
+  float: left;
+  padding: 1rem;
+  position: relative;
+  text-decoration: none;
+  transition-duration: 0.5s;
+}
+
+nav li a {
+  color: rgba(233, 237, 237, 1);
+}
+
+nav li:hover,
+nav li:focus-within {
+  background: rgb(83, 127, 126);
+  cursor: pointer;
+}
+
+nav li:focus-within a {
+  outline: none;
+}
+
+nav ul li ul {
+  z-index: 3;
+  background: #263238;
+  border: 1px solid rgb(83,127,126);
+  min-width: 10rem;
+  position: absolute;
+  transition: all 0.5s ease;
+  margin-top: 1rem;
+  left: 0;
+  display: none;
+}
+
+nav ul li:hover > ul,
+nav ul li:focus-within > ul,
+nav ul li ul:hover,
+nav ul li ul:focus {
+   display: block;
+}
+
+nav ul li ul li {
+  width: 100%;
+}
