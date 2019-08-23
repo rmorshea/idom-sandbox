@@ -7,6 +7,10 @@ html, body, #root, #root > div {
   line-height: 1.5em;
 }
 
+p, code, a {
+  color: rgba(233, 237, 237, 1);
+}
+
 #root {
   padding: 20px;
 }
@@ -56,6 +60,7 @@ body {
 #output-top {
   width: 100%;
   flex-basis: 0.3;
+  min-height: 100px;
 }
 
 #output-bottom {
@@ -63,6 +68,7 @@ body {
   display: flex;
   flex-direction: row;
   max-height: 75%;
+  min-height: 100px;
   max-width: 100%;
   padding-top: 10px;
   margin-top: 10px;

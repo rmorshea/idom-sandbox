@@ -11,6 +11,7 @@ for file, title in {
     "todo.py": "To Do List",
     "dnd.py": "Drag and Drop",
     "snake.py": "The Game Snake",
+    "jsx.py": "ReactJS Components",
     # "react.py": "Custom React Components"
 }.items():
     with open(os.path.join(STATIC, "examples", file), "r") as f:

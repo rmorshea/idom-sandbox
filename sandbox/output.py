@@ -42,20 +42,12 @@ async def Output(self, text, last_error=None):
 @idom.element
 async def ModelView(self, text, stdout, last_error=None):
     if last_error:
-        view = idom.html.pre(
-            idom.html.code(
-                last_error, style={"color": "rgba(233, 237, 237, 1)"}
-            )
-        )
+        view = idom.html.pre(idom.html.code(last_error))
     else:
         try:
             view = idom.html.div(eval_exec(text, stdout))
         except Exception as error:
-            view = idom.html.pre(
-                idom.html.code(
-                    traceback.format_exc(), style={"color": "rgba(233, 237, 237, 1)"}
-                )
-            )
+            view = idom.html.pre(idom.html.code(traceback.format_exc()))
     return idom.html.div(view, id="output-top")
 
 

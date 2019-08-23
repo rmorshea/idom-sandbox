@@ -1,4 +1,4 @@
-Promise.all([
+return Promise.all([
     import('https://dev.jspm.io/react-codemirror2'),
     import('https://dev.jspm.io/codemirror/mode/python/python')
 ]).then(pkgs => {
