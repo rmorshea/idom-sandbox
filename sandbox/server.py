@@ -76,9 +76,9 @@ class CustomLayout(Layout):
     def set_output_view(self, element):
         self._output_element = element
 
-    async def trigger(self, target, data):
+    async def trigger(self, event):
         try:
-            return await super().trigger(target, data)
+            return await super().trigger(event)
         except Exception as error:
             self._output_element.update(None, last_error=traceback.format_exc())
 

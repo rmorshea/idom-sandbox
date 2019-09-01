@@ -4,7 +4,7 @@ from idom import Element
 
 here = os.path.dirname(__file__)
 STATIC = os.path.join(here, "static")
-SESSION_TIME_LIMIT = 60 * 60  # 1 hour
+SESSION_TIME_LIMIT = 30 * 60  # 30 minutes
 
 
 def custom_element(cls, state=None):
