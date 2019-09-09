@@ -6,7 +6,7 @@ from .utils import STATIC
 
 
 with open(os.path.join(STATIC, "editor.js"), "r") as f:
-    editor = idom.Module(f.read())
+    editor = idom.Eval(f.read())
 
 
 @idom.element(state="output")

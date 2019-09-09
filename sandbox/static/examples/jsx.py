@@ -1,17 +1,13 @@
 import idom
 
-module = idom.Module("""
-function Button({onClick}) {
+Button = idom.Eval("""
+({onClick}) => {
     return (
     	<button onClick={onClick}>
         	Click Me!
         </button>
     );
 }
-
-return {
-    Button: Button
-};
 """)
 
 
@@ -21,4 +17,4 @@ async def click(event):
         print(" ", k, ":", v)
 
 
-module.Button(onClick=click)
+Button(onClick=click)
