@@ -34,9 +34,9 @@ class SandboxServer(PerClientState):
         proc = ctx.Process(
             target=render_element_in_loop,
             args=(
-                self._element_constructor,
-                self._element_args,
-                self._element_kwargs,
+                self._root_element_constructor,
+                self._root_element_args,
+                self._root_element_kwargs,
                 inner_pipe,
             ),
             daemon=True,
